@@ -135,7 +135,7 @@ function getDeliveryPrice(wilayaCode) {
 const PRODUCTS_KEY = "mkRidProducts";
 const productPrices = {};
 
-function renderStoreProducts() {
+function renderStoreProducts(productsOverride) {
   const container = document.getElementById("store-products");
   container.replaceChildren();
 
@@ -147,27 +147,35 @@ function renderStoreProducts() {
   let products = [];
 
   try {
-    const saved = localStorage.getItem(PRODUCTS_KEY);
-
-    if (saved !== null) {
-      products = JSON.parse(saved);
+    if (Array.isArray(productsOverride)) {
+      // استُخدمت القائمة التي جرى تحميلها من products.json
+      products = productsOverride;
     } else {
-      products = [
-        {
-          id: "shoe",
-          name: "حذاء رياضي",
-          price: 3500,
-          image: "shoe.jpg",
-          visible: true
-        },
-        {
-          id: "shirt",
-          name: "قميص رجالي",
-          price: 2000,
-          image: "shirt.jpg",
-          visible: true
-        }
-      ];
+      // احتياط للاستخدام المحلي بالنقر المزدوج أو عند تعذر تحميل الملف
+      const saved = localStorage.getItem(PRODUCTS_KEY);
+
+      if (saved !== null) {
+        products = JSON.parse(saved);
+      } else {
+        products = [
+          {
+            id: "shoe",
+            name: "حذاء رياضي",
+            description: "حذاء رياضي أنيق ومريح للاستعمال اليومي.",
+            price: 3500,
+            image: "shoe.jpg",
+            visible: true
+          },
+          {
+            id: "shirt",
+            name: "قميص رجالي",
+            description: "قميص أنيق ومريح يناسب مختلف المناسبات.",
+            price: 2000,
+            image: "shirt.jpg",
+            visible: true
+          }
+        ];
+      }
     }
 
     if (!Array.isArray(products)) {
@@ -247,7 +255,29 @@ const price = document.createElement("p");
   });
 }
 
-renderStoreProducts();
+// على الموقع المنشور نقرأ ملف المنتجات المشترك.
+// عند فتح index.html بالنقر المزدوج، نستخدم localStorage كالمعتاد.
+if (window.location.protocol === "file:") {
+  renderStoreProducts();
+} else {
+  fetch("products.json?v=" + Date.now(), { cache: "no-store" })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("تعذر العثور على products.json");
+      }
+      return response.json();
+    })
+    .then(function (products) {
+      if (!Array.isArray(products)) {
+        throw new Error("قائمة المنتجات في products.json غير صحيحة");
+      }
+      renderStoreProducts(products);
+    })
+    .catch(function (error) {
+      console.error("تعذر تحميل ملف المنتجات المشترك، سيتم استخدام البيانات المحلية.", error);
+      renderStoreProducts();
+    });
+}
 
 
 let selectedPrice = 0;

@@ -301,6 +301,9 @@
       </form>
 
       <p id="product-status" class="status" role="status"></p>
+      <div class="actions">
+        <button type="button" id="export-products">تصدير المنتجات للنشر</button>
+      </div>
       <div id="product-list" class="product-list"></div>
     </section>
 
@@ -634,6 +637,27 @@ descriptionLabel.appendChild(descriptionInput);
     });
 
     renderProducts();
+
+    // تصدير المنتجات إلى ملف يمكن رفعه إلى GitHub Pages
+    document.getElementById("export-products")
+      .addEventListener("click", function () {
+        const data = JSON.stringify(products, null, 2);
+        const blob = new Blob([data], {
+          type: "application/json;charset=utf-8"
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "products.json";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+
+        productStatus.textContent =
+          "تم تصدير المنتجات. ارفع ملف products.json إلى GitHub.";
+      });
 
   </script>
 </body>
