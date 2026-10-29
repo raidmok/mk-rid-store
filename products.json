@@ -1,0 +1,26 @@
+[
+  {
+    "id": "shoe",
+    "name": "غطاء حماية الوحدة الخارجية لمكيف الهواء",
+    "price": 3000,
+    "image": "1790084572210_sjtzn5ho_2.jpg",
+    "visible": true,
+    "description": ""
+  },
+  {
+    "id": "shirt",
+    "name": "مظلة",
+    "price": 2500,
+    "image": "para.png",
+    "visible": true,
+    "description": ""
+  },
+  {
+    "id": "product-1792333611098",
+    "name": "سلة تنظيم الأغراض",
+    "description": "",
+    "price": 2000,
+    "image": "orga.jpg",
+    "visible": true
+  }
+]
