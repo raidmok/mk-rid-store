@@ -1,0 +1,640 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MK RID | لوحة الإدارة</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #090909;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      border-bottom: 1px solid #c9a34a;
+    }
+
+    .logo {
+      color: #d4af55;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 25px auto;
+    }
+
+    h1 { font-size: 25px; }
+
+    .note {
+      color: #bbb;
+      line-height: 1.8;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    input, button {
+      font: inherit;
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    input {
+      background: #181818;
+      color: white;
+      border: 1px solid #555;
+      min-width: 0;
+    }
+
+    #search { flex: 1; }
+
+    button {
+      cursor: pointer;
+      background: #d4af55;
+      color: #111;
+      border: none;
+      font-weight: bold;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid #444;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 330px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #333;
+      text-align: right;
+    }
+
+    th {
+      background: #191919;
+      color: #d4af55;
+    }
+
+    td input {
+      width: 120px;
+      max-width: 100%;
+    }
+
+    .status {
+      margin: 15px 0;
+      color: #d4af55;
+      line-height: 1.8;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .secondary {
+      background: #292929;
+      color: white;
+      border: 1px solid #666;
+    }
+
+    a { color: #d4af55; }
+
+    .product-panel {
+      margin-top: 35px;
+      padding: 20px;
+      background: #111;
+      border: 1px solid #c9a34a;
+      border-radius: 10px;
+    }
+
+    .product-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .product-form input {
+      width: 100%;
+    }
+
+    .product-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .product-item {
+      padding: 15px;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #181818;
+    }
+
+    .product-item label {
+      display: block;
+      margin: 10px 0;
+      color: #d4af55;
+    }
+
+    .product-item input[type="text"],
+    .product-item input[type="number"],
+    .product-item input[type="url"] {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .product-item .product-visible {
+      width: auto;
+      min-width: auto;
+      margin-left: 8px;
+    }
+
+    .product-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .danger {
+      background: #7b2424;
+      color: white;
+    }
+
+/* تنسيق حقول وصف المنتجات */
+#new-product-description,
+.product-item textarea {
+  display: block;
+  width: 100%;
+  min-height: 90px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  margin-top: 8px;
+  background: #1b1b1b;
+  color: #f5f5f5;
+  border: 1px solid #b9953b;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.8;
+  text-align: right;
+  direction: rtl;
+  resize: vertical;
+  outline: none;
+}
+
+#new-product-description:focus,
+.product-item textarea:focus {
+  border-color: #e5c15b;
+  box-shadow: 0 0 0 2px rgba(201, 164, 62, 0.15);
+}
+
+#new-product-description::placeholder,
+.product-item textarea::placeholder {
+  color: #999;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">MK RID</div>
+    <p>لوحة إدارة أسعار التوصيل</p>
+  </header>
+
+  <main>
+    <h1>أسعار التوصيل حسب الولاية</h1>
+    <p class="note">
+      أدخل سعر التوصيل لكل ولاية بالدينار الجزائري، ثم اضغط
+      «حفظ الأسعار». الأسعار الأولية تجريبية ويجب تعديلها حسب
+      أسعار شركة التوصيل التي تتعامل معها.
+    </p>
+
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="ابحث عن ولاية...">
+      <button id="save">حفظ الأسعار</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>رمز الولاية</th>
+            <th>اسم الولاية</th>
+            <th>التوصيل (دج)</th>
+          </tr>
+        </thead>
+        <tbody id="wilaya-rows">
+          <tr><td colspan="3">جارٍ تحميل الولايات...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <div class="actions">
+      <button id="save-bottom">حفظ الأسعار</button>
+      <button id="reset" class="secondary">إعادة الأسعار التجريبية</button>
+      <a href="index.html">العودة إلى المتجر</a>
+    </div>
+  </main>
+
+    <section class="product-panel">
+      <h1>إدارة المنتجات</h1>
+      <p class="note">
+        أضف المنتجات وعدّل أسماءها وأسعارها وصورها، أو أخفِ المنتجات
+        التي لا تريد عرضها في المتجر.
+      </p>
+
+      <form id="product-form" class="product-form">
+        <input
+          id="new-product-name"
+          type="text"
+          placeholder="اسم المنتج"
+          required
+        >
+        <label for="new-product-description">وصف المنتج</label>
+        <textarea
+         id="new-product-description"
+         placeholder="اكتب وصفًا مختصرًا للمنتج"
+         rows="3"
+        ></textarea>
+
+        <input
+          id="new-product-price"
+          type="number"
+          min="1"
+          step="1"
+          placeholder="السعر بالدينار"
+          required
+        >
+
+        <input
+          id="new-product-image"
+          type="text"
+          placeholder="اسم الصورة أو مسارها"
+          required
+        >
+
+        <button type="submit">إضافة المنتج</button>
+      </form>
+
+      <p id="product-status" class="status" role="status"></p>
+      <div id="product-list" class="product-list"></div>
+    </section>
+
+
+  <script src="algeria-data.js"></script>
+  <script>
+    const rows = document.getElementById("wilaya-rows");
+    const search = document.getElementById("search");
+    const status = document.getElementById("status");
+    const STORAGE_KEY = "mkRidDeliveryPrices";
+
+    let prices = {};
+
+    function loadPrices() {
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem(STORAGE_KEY) || "{}"
+        );
+
+        if (saved && typeof saved === "object" && !Array.isArray(saved)) {
+          prices = saved;
+        }
+      } catch (error) {
+        prices = {};
+      }
+    }
+
+    function showStatus(message) {
+      status.textContent = message;
+    }
+
+    function renderRows() {
+      rows.replaceChildren();
+
+      if (typeof communesRaw === "undefined" ||
+          !Array.isArray(communesRaw) ||
+          communesRaw.length === 0) {
+        rows.innerHTML =
+          '<tr><td colspan="3">تعذر تحميل البيانات. تحقق من ملف algeria-data.js.</td></tr>';
+        showStatus("تأكد أن الملف يحتوي على communesRaw وأنه في المجلد نفسه.");
+        return;
+      }
+
+      const wilayas = {};
+
+      communesRaw.forEach(function(item) {
+        const code = String(item.wilaya_code).padStart(2, "0");
+
+        if (!wilayas[code]) {
+          wilayas[code] = item.wilaya_name.trim();
+        }
+      });
+
+      const entries = Object.entries(wilayas)
+        .sort((a, b) => Number(a[0]) - Number(b[0]))
+        .filter(([code, name]) =>
+          (code + " " + name).includes(search.value.trim())
+        );
+
+      entries.forEach(function([code, name]) {
+        const tr = document.createElement("tr");
+        const codeCell = document.createElement("td");
+        const nameCell = document.createElement("td");
+        const priceCell = document.createElement("td");
+        const input = document.createElement("input");
+
+        codeCell.textContent = code;
+        nameCell.textContent = name;
+
+        input.type = "number";
+        input.min = "0";
+        input.step = "1";
+        input.required = true;
+        input.setAttribute("aria-label", "سعر التوصيل لولاية " + name);
+        input.dataset.code = code;
+        input.value = prices[code] ?? 500;
+
+        input.addEventListener("input", function() {
+          prices[code] = input.value;
+        });
+
+        priceCell.appendChild(input);
+        tr.append(codeCell, nameCell, priceCell);
+        rows.appendChild(tr);
+      });
+
+      showStatus("عدد الولايات المحمّلة: " + Object.keys(wilayas).length);
+    }
+
+    function savePrices() {
+      const inputs = rows.querySelectorAll("input[data-code]");
+
+      for (const input of inputs) {
+        const value = input.value.trim();
+
+        if (value === "" || !Number.isSafeInteger(Number(value)) ||
+            Number(value) < 0) {
+          showStatus("خطأ: أدخل سعرًا صحيحًا غير سالب لكل ولاية ظاهرة.");
+          input.focus();
+          return;
+        }
+
+        prices[input.dataset.code] = Number(value);
+      }
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(prices));
+        showStatus("تم حفظ الأسعار في هذا المتصفح بنجاح.");
+      } catch (error) {
+        showStatus("تعذر الحفظ. تحقق من إعدادات تخزين المتصفح.");
+      }
+    }
+
+    document.getElementById("save").addEventListener("click", savePrices);
+    document.getElementById("save-bottom").addEventListener("click", savePrices);
+
+    search.addEventListener("input", renderRows);
+
+    document.getElementById("reset").addEventListener("click", function() {
+      if (!confirm("هل تريد إعادة الأسعار الظاهرة إلى 500 دج؟")) return;
+
+      rows.querySelectorAll("input[data-code]").forEach(function(input) {
+        input.value = 500;
+        prices[input.dataset.code] = 500;
+      });
+
+      savePrices();
+    });
+
+    loadPrices();
+    renderRows();
+
+    // إدارة منتجات MK RID
+    const PRODUCTS_KEY = "mkRidProducts";
+    const productForm = document.getElementById("product-form");
+    const productList = document.getElementById("product-list");
+    const productStatus = document.getElementById("product-status");
+
+    const defaultProducts = [
+  {
+    id: "shoe",
+    name: "حذاء رياضي",
+    description: "حذاء رياضي أنيق ومريح للاستعمال اليومي.",
+    price: 3500,
+    image: "shoe.jpg",
+    visible: true
+  },
+  {
+    id: "shirt",
+    name: "قميص رجالي",
+    description: "قميص أنيق ومريح يناسب مختلف المناسبات.",
+    price: 2000,
+    image: "shirt.jpg",
+    visible: true
+  }
+];
+
+    function loadProducts() {
+      try {
+        const saved = localStorage.getItem(PRODUCTS_KEY);
+
+        if (saved === null) {
+          return defaultProducts.map(product => ({ ...product }));
+        }
+
+        const products = JSON.parse(saved);
+
+        if (!Array.isArray(products)) {
+          throw new Error("قائمة المنتجات غير صحيحة");
+        }
+
+        return products;
+      } catch (error) {
+        productStatus.textContent =
+          "تعذر تحميل المنتجات. تحقق من بيانات التخزين.";
+        return [];
+      }
+    }
+
+    let products = loadProducts();
+
+    function saveProducts() {
+      try {
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+        productStatus.textContent = "تم حفظ قائمة المنتجات بنجاح.";
+        renderProducts();
+      } catch (error) {
+        productStatus.textContent =
+          "تعذر حفظ المنتجات في المتصفح.";
+      }
+    }
+
+    function renderProducts() {
+      productList.replaceChildren();
+
+      products.forEach(function(product) {
+        const card = document.createElement("div");
+        card.className = "product-item";
+
+        const nameLabel = document.createElement("label");
+        nameLabel.textContent = "اسم المنتج";
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = product.name;
+        nameInput.required = true;
+        nameLabel.appendChild(nameInput);
+        const descriptionLabel = document.createElement("label");
+descriptionLabel.textContent = "وصف المنتج";
+
+const descriptionInput = document.createElement("textarea");
+descriptionInput.value = product.description || "";
+descriptionInput.rows = 3;
+descriptionInput.placeholder = "اكتب وصف المنتج";
+
+descriptionLabel.appendChild(descriptionInput);
+
+        const priceLabel = document.createElement("label");
+        priceLabel.textContent = "السعر بالدينار";
+
+        const priceInput = document.createElement("input");
+        priceInput.type = "number";
+        priceInput.min = "1";
+        priceInput.step = "1";
+        priceInput.value = product.price;
+        priceInput.required = true;
+        priceLabel.appendChild(priceInput);
+
+        const imageLabel = document.createElement("label");
+        imageLabel.textContent = "مسار الصورة";
+
+        const imageInput = document.createElement("input");
+        imageInput.type = "text";
+        imageInput.value = product.image;
+        imageInput.required = true;
+        imageLabel.appendChild(imageInput);
+
+        const visibleLabel = document.createElement("label");
+        const visibleInput = document.createElement("input");
+        visibleInput.type = "checkbox";
+        visibleInput.className = "product-visible";
+        visibleInput.checked = product.visible !== false;
+
+        visibleLabel.appendChild(visibleInput);
+        visibleLabel.appendChild(
+          document.createTextNode("إظهار المنتج في المتجر")
+        );
+
+        const actions = document.createElement("div");
+        actions.className = "product-actions";
+
+        const updateButton = document.createElement("button");
+        updateButton.type = "button";
+        updateButton.textContent = "حفظ التعديلات";
+
+        updateButton.addEventListener("click", function() {
+          const name = nameInput.value.trim();
+          const description = descriptionInput.value.trim();
+          const price = Number(priceInput.value);
+          const image = imageInput.value.trim();
+
+          if (!name || !image ||
+              !Number.isSafeInteger(price) || price < 1) {
+            productStatus.textContent =
+              "أدخل اسمًا وصورة وسعرًا صحيحًا للمنتج.";
+            return;
+          }
+
+          product.name = name;
+          product.description = description;
+          product.price = price;
+          product.image = image;
+          product.visible = visibleInput.checked;
+
+          saveProducts();
+        });
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.textContent = "حذف المنتج";
+        deleteButton.className = "danger";
+
+        deleteButton.addEventListener("click", function() {
+          if (!confirm("هل تريد حذف هذا المنتج؟")) return;
+
+          products = products.filter(item => item.id !== product.id);
+          saveProducts();
+        });
+
+        actions.append(updateButton, deleteButton);
+        card.append(
+  nameLabel,
+  descriptionLabel,
+  priceLabel,
+  imageLabel,
+  visibleLabel,
+  actions
+);
+        productList.appendChild(card);
+      });
+    }
+
+    productForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("new-product-name")
+        .value.trim();
+      const description = document.getElementById("new-product-description").value.trim();
+      const price = Number(document.getElementById("new-product-price").value);
+      const image = document.getElementById("new-product-image")
+        .value.trim();
+
+      if (!name || !image ||
+          !Number.isSafeInteger(price) || price < 1) {
+        productStatus.textContent =
+          "تحقق من اسم المنتج وسعره ومسار الصورة.";
+        return;
+      }
+
+      products.push({
+  id: "product-" + Date.now(),
+  name: name,
+  description: description,
+  price: price,
+  image: image,
+  visible: true
+});
+
+      saveProducts();
+      productForm.reset();
+    });
+
+    renderProducts();
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,533 @@
+
+body {
+  margin: 0;
+  background: #111111;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 25px;
+  border-bottom: 1px solid #c9a34a;
+  color: #d4af55;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+main {
+  padding: 60px 20px;
+}
+
+
+h1 {
+  color: #d4af55;
+  font-size: 36px;
+  text-align: center;
+}
+
+button {
+  background: #d4af55;
+  color: #111111;
+  border: none;
+  padding: 12px 25px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+nav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+nav a:hover {
+  color: #d4af55;
+}
+
+.hero {
+  padding: 50px 20px;
+  border-bottom: 1px solid #333;
+}
+
+.shop-button {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 12px 24px;
+  background: #d4af55;
+  color: #111;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.shop-button:hover {
+  background-color: #c9a34a;
+}
+
+.products {
+  padding: 30px 20px;
+}
+
+
+.product-card {
+  background-color: #222;
+  color: white;
+  width: 260px;
+  max-width: 100%;
+  padding: 20px;
+  margin: 15px;
+  border: 1px solid #c9a34a;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+  height: 550px;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+
+.price {
+  color: #d4af55;
+  font-weight: bold;
+}
+
+footer {
+  padding: 25px;
+  border-top: 1px solid #333;
+  color: #aaa;
+}
+
+/* تحسين عرض المتجر على الهاتف */
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    padding: 18px 10px;
+  }
+
+  nav {
+    justify-content: center;
+    gap: 12px;
+  }
+
+  main {
+    padding: 20px 10px;
+  }
+
+  .hero {
+    padding: 35px 10px;
+  }
+
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  #products {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px;
+  gap: 8px;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+  
+.product-card {
+  width: calc(50% - 6px);
+  max-width: none;
+  min-height: 0px;
+  height: auto;
+  margin: 0;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+  .product-image {
+  height: 120px;
+  }
+  .product-card h3 {
+  font-size: 15px;
+}
+
+.product-card p {
+  font-size: 12px;
+}
+
+.order-button {
+  padding: 8px 4px;
+  font-size: 12px;
+}
+}
+
+
+#products {
+  text-align: center;
+  padding: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.order-button {
+  background-color: gold;
+  color: #111;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+font-size: 16px;
+transition: background-color 0.2s ease, transform 0.2s ease;
+ margin-top: auto;
+}
+
+.order-button:hover {
+  background-color: #d4af37;
+}
+
+.order-button:active {
+  transform: scale(0.96);
+}
+
+#products > h2 {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-card h3 {
+  font-size: 22px;
+  color: #bd661f;
+}
+
+.product-card p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.product-image {
+  width: 100%;
+  height: 240px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #292929;
+  box-sizing: border-box;
+  clip-path: inset(0 round 10px);
+}
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.product-image img:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+  #products {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  #products > h2 {
+    grid-column: 1 / -1;
+  }
+
+  #products > .product-card {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .product-image {
+    height: 120px;
+  }
+}
+
+/* استمارة الطلب */
+#order {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #1c1c1c;
+  border: 1px solid #c9a34a;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+#order h2 {
+  color: #d4af55;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+#order > p {
+  color: #cccccc;
+  margin-bottom: 25px;
+}
+
+#order form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: right;
+}
+
+#order label {
+  color: #d4af55;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+#order input,
+#order select,
+#order textarea {
+  width: 100%;
+  padding: 12px;
+  background: #111111;
+  color: white;
+  border: 1px solid #555555;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+}
+
+#order textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+#order input:focus,
+#order select:focus,
+#order textarea:focus {
+  outline: none;
+  border-color: #d4af55;
+}
+
+#order button {
+  margin-top: 12px;
+  background: #d4af55;
+  color: #111111;
+  border-radius: 6px;
+  font-weight: bold;
+  padding: 14px;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  #order {
+    width: 100%;
+    padding: 18px;
+    margin: 25px auto;
+  }
+
+  #order h2 {
+    font-size: 24px;
+  }
+}
+.selected-product {
+  background: #111111;
+  border: 1px solid #c9a34a;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 20px;
+  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.selected-product span {
+  color: #cccccc;
+}
+
+.selected-product strong {
+  color: #d4af55;
+}
+.price-summary {
+  background: #111111;
+  border: 1px solid #c9a34a;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 15px;
+  text-align: right;
+}
+
+.price-summary p {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #eeeeee;
+  margin: 8px 0;
+}
+
+.price-summary strong {
+  color: #d4af55;
+}
+
+.price-summary .total-price {
+  border-top: 1px solid #444444;
+  padding-top: 12px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.form-message {
+  display: none;
+  margin: 10px 0 18px;
+  padding: 12px 14px;
+  background: #2a1b0b;
+  color: #ffd66b;
+  border: 1px solid #d4af55;
+  border-right: 5px solid #e0b84f;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.8;
+  text-align: right;
+}
+
+.form-message:not(:empty) {
+  display: block;
+}
+.order-note {
+  margin-top: 12px;
+  padding: 14px;
+  background: #2a1b0b;
+  color: #ffd66b;
+  border: 1px solid #c9a34a;
+  border-right: 5px solid #d4af55;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.9;
+  text-align: right;
+}
+
+/* شبكة بطاقات منتجات MK RID */
+#store-products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+#store-products .product-card {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+#store-products .product-image img {
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  #store-products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #store-products .product-image img {
+    height: 160px;
+  }
+}
+
+@media (max-width: 420px) {
+  #store-products {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* تحسين صور المنتجات */
+#store-products .product-image {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #292929;
+}
+
+#store-products .product-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 14px;
+}
+
+/* توحيد تنسيق جميع صور منتجات MK RID */
+#store-products .product-image {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #292929;
+}
+
+#store-products .product-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px !important;
+}
+
+/* الحفاظ على الزوايا الدائرية حتى عند تغيير الصورة */
+#store-products .product-image img:not([src]) {
+  display: none;
+}

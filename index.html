@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MK RID | المتجر</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <div class="logo">MK RID</div>
+    <nav>
+      <a href="#">الرئيسية</a>
+      <a href="#products">المنتجات</a>
+      <a href="#contact">اتصل بنا</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>اكتشف منتجات MK RID</h1>
+      <p>منتجات متنوعة وعروض تناسب احتياجاتك.</p>
+      <a class="shop-button" href="#products">
+        تصفح المنتجات
+      </a>
+    </section>
+
+
+<section id="products">
+  <h2>منتجاتنا</h2>
+  <div id="store-products"></div>
+</section>
+
+
+<section id="order">
+  <h2>إتمام الطلب</h2>
+  <p>يرجى ملء المعلومات التالية لإتمام طلبك.</p>
+<div class="selected-product">
+  <span>المنتج المطلوب:</span>
+  <strong id="selected-product-name">لم يتم اختيار منتج</strong>
+</div>
+  <form id="order-form">
+    <label for="customer-name">الاسم الكامل</label>
+    <input type="text" id="customer-name" name="customer-name" required>
+
+    <label for="phone">رقم الهاتف</label>
+    <input type="tel" id="phone" name="phone" required>
+
+    <label for="wilaya">الولاية</label>
+    <select id="wilaya" name="wilaya" required>
+      <option value="">اختر الولاية</option>
+    </select>
+
+    <label for="commune">البلدية</label>
+<select id="commune" name="commune" required disabled>
+  <option value="">اختر البلدية</option>
+</select>
+
+    <label for="address">العنوان بالتفصيل</label>
+    <textarea id="address" name="address" required></textarea>
+
+    <label for="quantity">الكمية</label>
+    <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+
+<div class="price-summary">
+  <p>سعر الوحدة: <strong id="unit-price">0 دج</strong></p>
+  <p>الكمية: <strong id="summary-quantity">1</strong></p>
+  <p>ثمن المنتجات: <strong id="products-total">0 دج</strong></p>
+  <p>سعر التوصيل: <strong id="delivery-price">0 دج</strong></p>
+  <p class="total-price">
+    المبلغ الإجمالي: <strong id="total-price">0 دج</strong>
+  </p>
+</div>
+
+<div class="order-note">
+  <strong>ملاحظة:</strong>
+  يرجى التأكد من صحة رقم الهاتف والعنوان قبل تأكيد الطلب.
+</div>
+
+<p id="form-message"
+   class="form-message"
+   role="alert"
+   aria-live="assertive"></p>
+
+    <button type="submit">تأكيد الطلب</button>
+  </form>
+</section>
+
+
+    <footer id="contact">
+      MK RID — جميع الحقوق محفوظة
+    </footer>
+  </main>
+
+<script>
+  // اختيار المنتج عند الضغط على زر "اطلب الآن"
+  let orderButtons = [];
+  const productName = document.getElementById("selected-product-name");
+  const orderSection = document.getElementById("order");
+const quantityInput = document.getElementById("quantity");
+const unitPriceElement = document.getElementById("unit-price");
+const summaryQuantity = document.getElementById("summary-quantity");
+const totalPriceElement = document.getElementById("total-price");
+const productsTotalElement = document.getElementById("products-total");
+const deliveryPriceElement = document.getElementById("delivery-price");
+
+const DELIVERY_STORAGE_KEY = "mkRidDeliveryPrices";
+const defaultDeliveryPrice = 500;
+
+function getDeliveryPrice(wilayaCode) {
+  try {
+    const prices = JSON.parse(
+      localStorage.getItem(DELIVERY_STORAGE_KEY) || "{}"
+    );
+
+    const code = String(wilayaCode).padStart(2, "0");
+    const price = prices[code];
+
+    if (
+      price !== undefined &&
+      Number.isSafeInteger(Number(price)) &&
+      Number(price) >= 0
+    ) {
+      return Number(price);
+    }
+  } catch (error) {
+    console.error("تعذر قراءة أسعار التوصيل", error);
+  }
+
+  return defaultDeliveryPrice;
+}
+
+const PRODUCTS_KEY = "mkRidProducts";
+const productPrices = {};
+
+function renderStoreProducts() {
+  const container = document.getElementById("store-products");
+  container.replaceChildren();
+
+  orderButtons = [];
+  Object.keys(productPrices).forEach(function(name) {
+    delete productPrices[name];
+  });
+
+  let products = [];
+
+  try {
+    const saved = localStorage.getItem(PRODUCTS_KEY);
+
+    if (saved !== null) {
+      products = JSON.parse(saved);
+    } else {
+      products = [
+        {
+          id: "shoe",
+          name: "حذاء رياضي",
+          price: 3500,
+          image: "shoe.jpg",
+          visible: true
+        },
+        {
+          id: "shirt",
+          name: "قميص رجالي",
+          price: 2000,
+          image: "shirt.jpg",
+          visible: true
+        }
+      ];
+    }
+
+    if (!Array.isArray(products)) {
+      throw new Error("قائمة المنتجات غير صحيحة");
+    }
+  } catch (error) {
+    container.textContent = "تعذر تحميل المنتجات.";
+    console.error(error);
+    return;
+  }
+
+  products.forEach(function(product) {
+    if (
+      product.visible === false ||
+      typeof product.name !== "string" ||
+      !Number.isSafeInteger(Number(product.price)) ||
+      Number(product.price) < 1
+    ) {
+      return;
+    }
+
+    productPrices[product.name] = Number(product.price);
+
+    const card = document.createElement("article");
+    card.className = "product-card";
+
+    const imageBox = document.createElement("div");
+    imageBox.className = "product-image";
+
+    const image = document.createElement("img");
+    image.src = product.image || "";
+    image.alt = product.name;
+    image.loading = "lazy";
+    image.onerror = function() {
+      image.style.display = "none";
+    };
+
+    
+const title = document.createElement("h3");
+title.textContent = product.name;
+
+const description = document.createElement("p");
+description.className = "product-description";
+description.textContent = product.description || "";
+
+const price = document.createElement("p");
+
+    price.className = "price";
+    price.textContent =
+      Number(product.price).toLocaleString("ar-DZ") + " دج";
+
+    const button = document.createElement("button");
+    button.className = "order-button";
+    button.type = "button";
+    button.textContent = "اطلب الآن";
+    button.dataset.product = product.name;
+
+    imageBox.appendChild(image);
+    card.append(imageBox, title, description, price, button);
+    container.appendChild(card);
+
+    orderButtons.push(button);
+  });
+
+  orderButtons.forEach(function(button) {
+    button.addEventListener("click", function() {
+      const product = button.dataset.product;
+
+      productName.textContent = product;
+      selectedPrice = productPrices[product] || 0;
+
+      quantityInput.value = 1;
+      updatePrice();
+
+      orderSection.scrollIntoView({ behavior: "smooth" });
+    });
+  });
+}
+
+renderStoreProducts();
+
+
+let selectedPrice = 0;
+
+function updatePrice() {
+  const quantity = Math.max(1, Number(quantityInput.value) || 1);
+
+  const productsTotal = selectedPrice * quantity;
+
+  const deliveryPrice = wilayaSelect.value
+  ? getDeliveryPrice(wilayaSelect.value)
+  : 0;
+  const total = productsTotal + deliveryPrice;
+
+  unitPriceElement.textContent =
+    selectedPrice.toLocaleString("ar-DZ") + " دج";
+
+  summaryQuantity.textContent = quantity;
+
+  productsTotalElement.textContent =
+    productsTotal.toLocaleString("ar-DZ") + " دج";
+
+  deliveryPriceElement.textContent =
+    deliveryPrice.toLocaleString("ar-DZ") + " دج";
+
+  totalPriceElement.textContent =
+    total.toLocaleString("ar-DZ") + " دج";
+}
+
+quantityInput.addEventListener("input", updatePrice);
+
+
+</script>
+
+<!-- تحميل بيانات الولايات والبلديات مرة واحدة فقط -->
+<script src="algeria-data.js"></script>
+
+<script>
+  const wilayaSelect = document.getElementById("wilaya");
+  const communeSelect = document.getElementById("commune");
+
+  // تجميع البلديات حسب رمز الولاية
+  const algeriaData = {};
+
+  communesRaw.forEach(function (item) {
+    const code = item.wilaya_code;
+
+    if (!algeriaData[code]) {
+      algeriaData[code] = {
+        name: item.wilaya_name.trim(),
+        communes: []
+      };
+    }
+
+    algeriaData[code].communes.push(item.commune_name);
+  });
+
+  // ترتيب البلديات أبجديًا وإضافة الولايات
+  Object.keys(algeriaData)
+    .sort((a, b) => Number(a) - Number(b))
+    .forEach(function (code) {
+      const wilaya = algeriaData[code];
+
+      wilaya.communes.sort((a, b) => a.localeCompare(b, "ar"));
+
+      const option = document.createElement("option");
+      option.value = code;
+      option.textContent = code + " - " + wilaya.name;
+      wilayaSelect.appendChild(option);
+    });
+
+  // تحديث البلديات عند اختيار الولاية
+  wilayaSelect.addEventListener("change", function () {
+    communeSelect.innerHTML =
+      '<option value="">اختر البلدية</option>';
+
+    const wilaya = algeriaData[wilayaSelect.value];
+
+   if (!wilaya) {
+  communeSelect.disabled = true;
+  updatePrice();
+  return;
+}
+
+    wilaya.communes.forEach(function (name) {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      communeSelect.appendChild(option);
+    });
+
+    communeSelect.disabled = false;
+    updatePrice();
+  });
+
+const orderForm = document.getElementById("order-form");
+const formMessage = document.getElementById("form-message");
+
+
+orderForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const customerName =
+    document.getElementById("customer-name").value.trim();
+  const phone =
+    document.getElementById("phone").value.trim();
+  const wilaya = wilayaSelect.value;
+  const commune = communeSelect.value;
+  const address =
+    document.getElementById("address").value.trim();
+  const quantity = Number(quantityInput.value);
+
+  if (!productPrices[productName.textContent]) {
+    formMessage.textContent = "يرجى اختيار منتج أولًا.";
+    return;
+  }
+
+  if (customerName.length < 3) {
+    formMessage.textContent = "يرجى إدخال الاسم الكامل.";
+    return;
+  }
+
+  const normalizedPhone = phone.replace(/[\s.-]/g, "");
+  const validPhone =
+    /^(?:(?:\+213|00213|0)(?:5|6|7)\d{8})$/.test(normalizedPhone);
+
+  if (!validPhone) {
+    formMessage.textContent = "يرجى إدخال رقم هاتف جزائري صحيح.";
+    return;
+  }
+
+  if (!wilaya || !commune) {
+    formMessage.textContent = "يرجى اختيار الولاية والبلدية.";
+    return;
+  }
+
+  if (address.length < 5) {
+    formMessage.textContent = "يرجى إدخال العنوان بالتفصيل.";
+    return;
+  }
+
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    formMessage.textContent = "يرجى إدخال كمية صحيحة.";
+    return;
+  }
+
+  const product = productName.textContent;
+  const unitPrice = productPrices[product];
+  const productsTotal = unitPrice * quantity;
+  const deliveryPrice = getDeliveryPrice(wilaya);
+  const total = productsTotal + deliveryPrice;
+
+  const wilayaName =
+    wilayaSelect.options[wilayaSelect.selectedIndex].text;
+
+  const message = [
+    "🛍️ طلب جديد - MK RID",
+    "------------------------",
+    "الاسم: " + customerName,
+    "الهاتف: " + phone,
+    "المنتج: " + product,
+    "سعر الوحدة: " + unitPrice + " دج",
+    "الكمية: " + quantity,
+    "مجموع المنتجات: " + productsTotal + " دج",
+    "الولاية: " + wilayaName,
+    "البلدية: " + commune,
+    "العنوان: " + address,
+    "سعر التوصيل: " + deliveryPrice + " دج",
+    "المبلغ الإجمالي: " + total + " دج"
+  ].join("\n");
+
+  const whatsappURL =
+    "https://wa.me/213779813849?text=" +
+    encodeURIComponent(message);
+
+  formMessage.textContent =
+    "تم تجهيز الطلب. أكمل إرساله عبر واتساب.";
+
+  window.open(whatsappURL, "_blank");
+});
+
+</script>
+</body>
+</html>
+
